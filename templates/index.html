@@ -1,0 +1,40 @@
+{{define "index"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/htmx.org@1.9.5" integrity="sha384-xcuj3WpfgjlKF+FXhSQFQ0ZNr39ln+hwjN3npfM9VBnUskLolQAcN80McRIVOPuO" crossorigin="anonymous"></script>
+    <title>Hello, World!</title>
+    <link href="/dist/output.css" rel="stylesheet">
+</head>
+<body>
+    
+    <div class="flex flex-col min-h-screen items-center">
+
+        <h1 class="text-sky-400">iam you styling father</h1>
+        <div id="user-info">
+            <button hx-get="/get-info" hx-target="#user-info" hx-swap="innerHTML" >Reveal Info</button>
+        </div>
+        <hr>
+        <div id="habit-container" class="w-full">
+            {{ template "habits" .}}
+        </div>
+        <div>
+            <button hx-post="/clicked" hx-swap="outerHTML">Add</button>
+        </div>
+        <div>
+            <button hx-on:click="htmx.toggleClass(htmx.find('#new-habit'), 'hidden')">Add new Habit</button>
+            <button hx-on:click="alert('You clicked me!')">Alert</button>
+            <div id="new-habit" class="hidden">
+                <form>
+                    <label>Name: </label><input type="text">
+                    <label>Description</label><input type="text">
+                    <button type="submit">Add</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+{{end}}

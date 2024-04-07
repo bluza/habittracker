@@ -1,0 +1,10 @@
+{{define "habits"}}
+    {{range . }}
+        <div class="flex flex-row border">
+            <p class="text-lg p-5">{{.Date.Format "Jan 02, 2006"}}</p>
+            
+            <p class="text-lg p-5 hover:text-sky-600">name {{.Activity.Name }}</p>
+            <p class="text-lg p-5">Description {{.Activity.Description }}</p>
+        </div>
+    {{end}}
+{{end}}

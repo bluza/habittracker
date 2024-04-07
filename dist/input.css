@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base{
+    button {
+        @apply bg-gray-500;
+        @apply rounded-sm;
+        @apply text-amber-400;
+    }
+}
