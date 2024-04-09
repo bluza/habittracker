@@ -1,10 +1,11 @@
 {{define "habits"}}
     {{range . }}
-        <div class="flex flex-row border">
+        <div class="flex flex-row border" id="habit-{{.ID}}">
             <p class="text-lg p-5">{{.Date.Format "Jan 02, 2006"}}</p>
             
-            <p class="text-lg p-5 hover:text-sky-600">name {{.Activity.Name }}</p>
-            <p class="text-lg p-5">Description {{.Activity.Description }}</p>
+            <p class="text-lg p-5 hover:text-sky-600">Habit Name: {{.Activity.Name }}</p>
+            <p class="text-lg p-5">Description: {{.Activity.Description }}</p>
+            <button hx-delete="/habit/{{.ID}}" hx-target="#habit-container" value="{{.ID}}" name="habit-delete">❌</button>
         </div>
     {{end}}
 {{end}}

@@ -9,13 +9,10 @@
     <link href="/dist/output.css" rel="stylesheet">
 </head>
 <body>
-    
+
     <div class="flex flex-col min-h-screen items-center">
 
         <h1 class="text-sky-400">iam you styling father</h1>
-        <div id="user-info">
-            <button hx-get="/get-info" hx-target="#user-info" hx-swap="innerHTML" >Reveal Info</button>
-        </div>
         <hr>
         <div id="habit-container" class="w-full">
             {{ template "habits" .}}
@@ -27,9 +24,9 @@
             <button hx-on:click="htmx.toggleClass(htmx.find('#new-habit'), 'hidden')">Add new Habit</button>
             <button hx-on:click="alert('You clicked me!')">Alert</button>
             <div id="new-habit" class="hidden">
-                <form>
-                    <label>Name: </label><input type="text">
-                    <label>Description</label><input type="text">
+                <form hx-post="/add" hx-target="#habit-container" >
+                    <label>Name: </label><input type="text" name="Name" minlength="2" required>
+                    <label>Description:</label><input type="text" name="Description">
                     <button type="submit">Add</button>
                 </form>
             </div>

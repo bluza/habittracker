@@ -1,2 +1,2 @@
 npx tailwindcss -i ./dist/input.css -o ./dist/output.css;
-go run . 
+CGO_ENABLED=1 go run . 
