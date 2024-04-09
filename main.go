@@ -5,6 +5,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 	"text/template"
 	"time"
@@ -17,11 +18,6 @@ import (
 
 const DB_FILE_NAME = "foo.sqlite"
 
-type TestData struct {
-	Name  string
-	Phone string
-	Email string
-}
 type Template struct {
 	templates *template.Template
 }
@@ -52,11 +48,10 @@ func generateTestData() []habits.Habit {
 func createTable(db *sql.DB) {
 
 	sqlStmt := `
-	create table if not exists habit (
+	CREATE TABLE IF NOT EXISTS habit (
 		id integer primary key,
 		name text,
 		description text
-		timestamp int
 	);
 	`
 	_, err := db.Exec(sqlStmt)
@@ -66,11 +61,11 @@ func createTable(db *sql.DB) {
 	}
 }
 func insertHabit(db *sql.DB, habit habits.Habit) {
-	stmt, err := db.Prepare("INSERT INTO habit(name, description, timestamp) VALUES(?,?)")
+	stmt, err := db.Prepare("INSERT INTO habit(name, description) VALUES(?,?)")
 	if err != nil {
 		log.Fatal(err)
 	}
-	_, err = stmt.Exec(habit.Activity.Name, habit.Activity.Description, habit.Date.Unix())
+	_, err = stmt.Exec(habit.Activity.Name, habit.Activity.Description)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -78,7 +73,7 @@ func insertHabit(db *sql.DB, habit habits.Habit) {
 
 func loadHabits(db *sql.DB) []habits.Habit {
 
-	rows, err := db.Query("select id, name from habit")
+	rows, err := db.Query("SELECT id, name, description FROM habit")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -86,7 +81,7 @@ func loadHabits(db *sql.DB) []habits.Habit {
 	habitList := make([]habits.Habit, 0)
 	for rows.Next() {
 		var tmpHabit habits.Habit
-		err := rows.Scan(&tmpHabit.ID, &tmpHabit.Activity.Name)
+		err := rows.Scan(&tmpHabit.ID, &tmpHabit.Activity.Name, &tmpHabit.Activity.Description)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -95,25 +90,38 @@ func loadHabits(db *sql.DB) []habits.Habit {
 	}
 	return habitList
 }
+func deleteHabit(db *sql.DB, habitList []habits.Habit, idToDelete int) []habits.Habit {
+	stmt, err := db.Prepare("DELETE FROM habit WHERE id=?")
+	if err != nil {
+		log.Fatal(err)
+	}
+	_, err = stmt.Exec(idToDelete)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return habits.Remove(habitList, idToDelete)
+}
+
 func main() {
 
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
-	db, err := sql.Open("sqlite3", "./"+DB_FILE_NAME+"?cache=shared")
-	db.SetMaxOpenConns(2)
+	db, err := sql.Open("sqlite3", "./"+DB_FILE_NAME)
 	if err != nil {
 		log.Fatal(err)
-		log.Printf("Created DB file %v", DB_FILE_NAME)
 	}
 	defer db.Close()
 
-	createTable(db)
-	for _, habit := range generateTestData() {
-		insertHabit(db, habit)
+	_, err = os.Stat(DB_FILE_NAME)
+
+	if err != nil {
+		createTable(db)
+		for _, habit := range generateTestData() {
+			insertHabit(db, habit)
+		}
 	}
 
 	habitList := loadHabits(db)
-	nextHabitID := len(habitList) - 1
 
 	e := echo.New()
 	e.Static("/dist", "dist")
@@ -127,31 +135,27 @@ func main() {
 	e.GET("/", func(e echo.Context) error {
 		return e.Render(http.StatusOK, "index", &habitList)
 	})
-	
+
 	e.POST("/clicked", func(e echo.Context) error {
 		return e.Render(http.StatusOK, "habits", nil)
 	})
 	e.POST("add", func(e echo.Context) error {
-		nextHabitID += 1
-		Name := e.FormValue("Name")
-		Description := e.FormValue("Description")
-		habitList = append(
-			habitList,
-			habits.Habit{
-				Date: time.Now(),
-				ID:   nextHabitID,
-				Activity: habits.Activity{
-					Name:        Name,
-					Description: Description,
-				},
-			})
+		newHabit := habits.Habit{
+			Date: time.Now(),
+			Activity: habits.Activity{
+				Name:        e.FormValue("Name"),
+				Description: e.FormValue("Description"),
+			},
+		}
+		insertHabit(db, newHabit)
+		habitList = append(habitList, newHabit)
 		return e.Render(http.StatusOK, "habits", &habitList)
 	})
 
 	e.DELETE("/habit/:id", func(e echo.Context) error {
 		id, err := strconv.Atoi(e.Param("id"))
 		if err == nil {
-			habitList = habits.Remove(habitList, id)
+			habitList = deleteHabit(db, habitList, id)
 		}
 		return e.Render(http.StatusOK, "habits", &habitList)
 	})
