@@ -4,8 +4,11 @@
 
 @layer base{
     button {
-        @apply bg-gray-500;
+        @apply bg-slate-100;
         @apply rounded-sm;
-        @apply text-amber-400;
+        @apply text-sky-400;
+    }
+    button :hover{
+        @apply bg-slate-400;
     }
 }

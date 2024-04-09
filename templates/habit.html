@@ -1,11 +1,11 @@
 {{define "habits"}}
     {{range . }}
         <div class="flex flex-row border" id="habit-{{.ID}}">
-            <p class="text-lg p-5">{{.Date.Format "Jan 02, 2006"}}</p>
+            <div class="basis-1/6 text-lg p-5 text-sky-600">{{.Date.Format "Jan 02, 2006"}}</div>
             
-            <p class="text-lg p-5 hover:text-sky-600">Habit Name: {{.Activity.Name }}</p>
-            <p class="text-lg p-5">Description: {{.Activity.Description }}</p>
-            <button hx-delete="/habit/{{.ID}}" hx-target="#habit-container" value="{{.ID}}" name="habit-delete">❌</button>
+            <div class="basis-2/6 text-lg p-5 hover:text-sky-600"><span class="font-bold text-neutral-600">Name: </span>{{.Activity.Name }}</div>
+            <div class="basis-3/6 text-lg p-5"><span class="font-bold text-neutral-600">Description: </span>{{.Activity.Description }}</div>
+            <button class="my-auto mr-1 h-10 w-10" hx-delete="/habit/{{.ID}}" hx-target="#habit-container" value="{{.ID}}" name="habit-delete">❌</button>
         </div>
     {{end}}
 {{end}}

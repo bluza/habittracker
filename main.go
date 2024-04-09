@@ -136,9 +136,6 @@ func main() {
 		return e.Render(http.StatusOK, "index", &habitList)
 	})
 
-	e.POST("/clicked", func(e echo.Context) error {
-		return e.Render(http.StatusOK, "habits", nil)
-	})
 	e.POST("add", func(e echo.Context) error {
 		newHabit := habits.Habit{
 			Date: time.Now(),
