@@ -85,7 +85,6 @@ func loadHabits(db *sql.DB) []habits.Habit {
 		if err != nil {
 			log.Fatal(err)
 		}
-		log.Println(tmpHabit)
 		habitList = append(habitList, tmpHabit)
 	}
 	return habitList

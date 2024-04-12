@@ -5,8 +5,8 @@ simple calender with days and corresponding Habits
 
 build and test -> just run ./run.sh
 
-simpler no build process
-https://unocss.dev/
+refresh automatically
+https://github.com/cosmtrek/air
 
 rebuild tailwind 
 >https://medium.com/gravel-engineering/personal-blog-with-htmx-go-part-2-integrating-tailwindcss-412ebc4dcc97

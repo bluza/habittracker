@@ -27,11 +27,15 @@
                 >
                 Add new Habit
             </button>
-            <div id="new-habit" class="hidden">
-                <form hx-post="/add" hx-target="#habit-container" >
-                    <label>Name: </label><input type="text" name="Name" placeholder="Bending" minlength="2" required class="bg-slate-300">
-                    <label>Description:</label><input type="text" name="Description" placeholder="to match the firelords strength!" class="bg-slate-300">
-                    <button type="submit" class="p-4">Add</button>
+            <div  id="new-habit" class="hidden">
+                <form hx-post="/add" hx-target="#habit-container" class="bg-slate-100 w-full flex flex-col mx-auto">
+                    <label class="ml-2">Name: </label>
+                    <input type="text" name="Name" placeholder="Bending" minlength="2" required class="bg-slate-200 w-10/12 ml-5">
+                    <label class="ml-2">Description:</label>
+                    <input type="text" name="Description" placeholder="to match the firelords strength!" class="bg-slate-200 w-10/12 ml-5">
+                    <label class="ml-2">Date:</label>
+                    <input type="date" name="Date" class="w-2/12 bg-slate-200 ml-5">
+                    <button type="submit" class="p-4 my-2 mx-auto w-3/12 ">Add</button>
                 </form>
             </div>
         </div>
